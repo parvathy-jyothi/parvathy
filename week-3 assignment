@@ -1,0 +1,43 @@
+#<<- operator is used to assign a value to an object in an environment that is different 
+#from the current environment
+
+#makeCasheMatrix: receives a matrix as argument into the function and returns it's inverse.
+
+makeCacheMatrix <- function(x = matrix()) {
+  
+  inv <- NULL   ## initialize inv as NULL; will hold value of matrix inverse 
+  set <- function(y) ## define the set function to assign new
+    { 
+    x <<- y      ## value of matrix in parent environment
+    inv <<- NULL ## if there is a new matrix, reset inv to NULL
+  }
+  get <- function() x
+  setinv <- function(inverse) inv <<- inverse  ## assigns value of inv in parent environment
+  getinv <- function() inv      ## gets the value of inv where called
+  list(set = set, get = get,
+       setinv = setinv,
+       getinve = getinv)
+}
+
+##cacheSolve:return a matrix that is the inverse of 'x'
+
+cacheSolve <- function(x, ...)
+  {
+  
+  inv <- x$getinv()  #get the value of the invertible matrix from the makeCacheMatrix function
+  if(!is.null(inv)) #if the inverse matrix is not NULL
+    {
+    message("getting cached data")# print the message 'getting cached data'
+    return(inv) #return the inverse matrix
+    }
+  data <- x$get()  #get the original Matrix Data
+  inv <- solve(data, ...) #use the in-built solve()to inverse the matrix
+  x$setinv(inv) #set the inverse matix
+  inv # return the inverse matrix
+}
+
+m <- matrix(c(100,84,65,56) ,2,2) #matrix function creates 2 x 2 (square) matrix to the m variable
+
+x <- makeCacheMatrix(m) #passes the matrix variable to the makeCacheMatrix as an argument
+
+cacheSolve(x) # returns the inverse of the matrix.
